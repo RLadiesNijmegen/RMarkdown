@@ -1,0 +1,13 @@
+"0","# percentage of survivals per class and gender"
+"0","## the as.numeric(as.character()) trick is used to get an average of the factor levels zero and 1, to end up with a proportion of 1 = survived values."
+"0","summary_data <- Titanic %>%"
+"0","  group_by(Sex, Pclass) %>%"
+"0","  summarise( percentages= mean(as.numeric(as.character(Survived))*100), sd=sd(as.numeric(as.character(Survived))*100))"
+"0","# Survival as a function of sex and class:"
+"0","c<-ggplot(data = summary_data,aes(x=Pclass, y=percentages, fill=Sex))+geom_bar(stat=""identity"",width=.8, position = ""dodge"") +scale_x_discrete(""Social Class"")"
+"0","#save plot"
+"0","ggsave(""Factor_Sex_SocialClass.png"", plot = last_plot(), device = NULL, path = NULL,"
+"0","  scale = 1, width = NA, height = NA, units = c(""in"", ""cm"", ""mm""),"
+"0","  dpi = 300, limitsize = TRUE)"
+"2","Saving 7 x 7 in image
+"

@@ -1,0 +1,2 @@
+"0","#prepare for inline information"
+"0","simple_model.table<- coef(summary(simple_model))"

@@ -1,0 +1,8 @@
+"0","# Survival as a function of social class"
+"0","b<-ggplot(data = Titanic,aes(x=Pclass,fill=Survived))+geom_bar()+scale_x_discrete(""Social Class"")"
+"0","#save plot"
+"0","ggsave(""Factor_SocialClass.png"", plot = last_plot(), device = NULL, path = NULL,"
+"0","  scale = 1, width = NA, height = NA, units = c(""in"", ""cm"", ""mm""),"
+"0","  dpi = 300, limitsize = TRUE)"
+"2","Saving 7 x 7 in image
+"

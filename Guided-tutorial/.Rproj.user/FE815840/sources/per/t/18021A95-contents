@@ -1,0 +1,371 @@
+---
+title: "R Markdown workshop"
+author: "R-Ladies Nijmegen 18 October 2018"
+output:
+  ioslides_presentation: null
+  beamer_presentation: default
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## What will be covered during today's event: 
+
+- the *Whys* and *Hows* of RMarkdown: general intro (5-10mins)
+- guided tutorial (30mins)
+- *Let's get dirty*: hand-on practice (45 mins)
+
+# R Markdown intro
+```{r Rmd_intro, out.width = "250px"}
+knitr::include_graphics("RMarkdown.png") # I can insert a picture which is in the wd
+```
+
+
+## Intro: What is R Markdown?
+
+* R Markdown is just a file format (.Rmd)
+* It combines code (R) and text (Markdown)
+* R Markdown documents are *dynamic*
+* but can be *knitted* to HTML,PDF, Word and many more
+
+## Intro: Why should I use R Markdown?
+
+* Easiest way to a reproducible workflow
+* No more copy-paste errors
+* More readable than a normal R script
+
+## Intro: How do I install R Markdown?
+
+Run this line of code:
+install.packages("rmarkdown")
+
+Now you're all set to create your first .Rmd document!
+
+## Intro: How do I create an R Markdown file?
+
+It's really easy!
+
+```{r new_Rmd, out.width = "650px"}
+knitr::include_graphics("newRMD.png")
+```
+
+## Intro: the YAML header
+![](YAML.png)
+
+
+The metadata is contained within three dashes
+
+Usually: author, title, output.
+Optionally: bibliography.
+
+NB: Indentation matters!!!
+
+## Intro: Text
+
+- [Markdown cheatsheet](https://www.markdownguide.org/cheat-sheet/)
+
+```{r markdown_cheatsheet, out.width = "500px"}
+knitr::include_graphics("markdown.png")
+```
+
+
+## Intro: Code
+Code can be included in two forms
+
+* code chunks
+* inline code
+
+## Intro: Code chunks
+```{r code_chunks, out.width = "700px"}
+knitr::include_graphics("code_chunks.png")
+```
+
+* In this document you can see the metadata and two code chunks.
+* Code chunks are contained within three backticks (```).
+* Inside {} you specify what language you want to use.
+* Usually that is R, but it could by Python, Bash, etc.
+* There you can name the code chunk and specify *options* for how you want your code to be run.
+
+## Intro: Code chunks options
+* eval: whether the code will be evaluated
+* echo: whether the R code will be included in the output document
+* include: whether the output of the code will be included in the output document
+* cache: whether to cache a code chunk
+
+## Intro: Inline code
+You can add R code in your text with 'r ...'.
+This code is always evaluated and replaced with the outcome.
+
+## Intro: Output
+* .pdf
+* .docx
+* .html
+* slides (like these ones!)
+
+* but you can also use R Markdown to create books, websites, and Shiny apps! 
+
+# R Markdown Guided tutorial
+```{r Rmd_GT, out.width = "250px"}
+knitr::include_graphics("RMarkdown.png")
+```
+
+
+## Guided tutorial:
+- R code chunks and inline R code
+- Figures
+- Tables
+- References
+- Compile/ Knit
+
+## Guided tutorial: R code chunks (How)
+
+to be able to run R code you need to include chunks that are R-specific.
+
+Easy way of doing this:
+- click on *Insert* -> *R*
+
+
+## Guided tutorial: R code chunks (loading packages)
+
+Let's give it a try! 
+
+We start by loading the packages you will need for this tutorial.
+We will need the following rpackages: ggplot2, dplyr, lme4, knitr and effects.
+
+```{r packages & functions, include=FALSE}
+#in your report, there will be things you don't want to be shown, like which packages you load.
+#use include=FALSE to just run the code but not the output &/or code
+
+#packages
+library(ggplot2) #plots
+library(dplyr) #tidying 
+library(lme4) #mixed effect models
+library(knitr) #for pretty tables
+library(effects) #for plotting model output
+#install.packages("kableExtra")
+library(kableExtra)
+
+## if ever you don't have a package, install it with a command like this
+#install.packages('ggplot2')
+
+## also load in a function to round and make prettier output for p-values
+#reportP function
+reportP <- function(pValue){
+  if (pValue < 0.01){
+    result <- "p<0.001"
+  } else {
+    result <- sprintf("p=%.3f", pValue) # inserts a float into a string and simultaneously do rounding
+  }
+  return(result)
+}
+
+```
+
+
+## Guided tutorial: R code chunks (importing datasets)
+
+Now that the packages have been loaded, we can move to the dataset we will use today.
+This comes from Kaggle (https://www.kaggle.com/) and.... 
+
+it's about Titanic!!!
+
+```{r markdown_Titanic, out.width = "500px"}
+knitr::include_graphics("Titanic.jpg")
+```
+
+```{r load data, include=FALSE}
+
+#let's load the provided dataset Titanic which comes from Kaggle (different from the built-in one, in that it's been cleaned up)
+
+
+#Titanic<-read.csv("D:/RMarkDownTutorial_RladiesNijmegen/Titanic.csv",stringsAsFactors = FALSE)
+## LEB: this is what works for me:
+## EZ: for me too -- let's encourage everyone to download the whole folder and use the R Project
+Titanic<-read.csv("Titanic.csv",stringsAsFactors = FALSE)
+
+# Let's move the features Survived, Pclass, Sex, Embarked to be factors
+cols<-c("Survived","Pclass","Sex","Embarked") # I create a vector and the function behind will turn all the variables into factors
+for (i in cols){
+  Titanic[,i] <- as.factor(Titanic[,i])
+}
+```
+
+## Guided tutorial: R code chunks (showing the data)
+
+This is what the data Titanic looks like:
+
+```{r str data, echo=FALSE}
+#from this code chunk, we would like to see the output, but not the code, printed in the report.
+#use echo=FALSE
+str(Titanic)
+
+```
+## Guided tutorial: Figures (1)
+
+Let's start having a look at the data.
+We wanna visualize the relationship betweeen sex and survival.
+
+"Women first!"
+
+```{r sex, include=FALSE}
+# First, let's look at the relationship between sex and survival
+## use ggplot to make a summary bar plot
+a<-ggplot(data = Titanic,aes(x=Sex,fill=Survived))+geom_bar()
+#save plot
+ggsave("Factor_Sex.png", plot = last_plot(), device = NULL, path = NULL,
+  scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
+  dpi = 300, limitsize = TRUE)
+```
+
+
+```{r Titanic_Sex, out.width = "600px"}
+knitr::include_graphics("Factor_Sex.png")
+```
+
+## Guided tutorial: Figures (2)
+
+Now the relationship between social class and survival.
+
+"All about class?"
+
+```{r class, include=FALSE}
+# Survival as a function of social class
+b<-ggplot(data = Titanic,aes(x=Pclass,fill=Survived))+geom_bar()+scale_x_discrete("Social Class")
+#save plot
+ggsave("Factor_SocialClass.png", plot = last_plot(), device = NULL, path = NULL,
+  scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
+  dpi = 300, limitsize = TRUE)
+```
+
+```{r Titanic_SocialClass, out.width = "600px"}
+knitr::include_graphics("Factor_SocialClass.png")
+```
+
+
+## Guided tutorial: Figures (3)
+
+Of course, we can also have a look at the relationship between class and sex over survival. Let's first simplify our y axis and make a new plot with proportions :)
+
+
+```{r class & sex, include=FALSE}
+# percentage of survivals per class and gender
+## the as.numeric(as.character()) trick is used to get an average of the factor levels zero and 1, to end up with a proportion of 1 = survived values.
+summary_data <- Titanic %>%
+  group_by(Sex, Pclass) %>%
+  summarise( percentages= mean(as.numeric(as.character(Survived))*100), sd=sd(as.numeric(as.character(Survived))*100))
+
+# Survival as a function of sex and class:
+c<-ggplot(data = summary_data,aes(x=Pclass, y=percentages, fill=Sex))+geom_bar(stat="identity",width=.8, position = "dodge") +scale_x_discrete("Social Class")
+#save plot
+ggsave("Factor_Sex_SocialClass.png", plot = last_plot(), device = NULL, path = NULL,
+  scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
+  dpi = 300, limitsize = TRUE)
+```
+
+```{r Titanic_Sex_SocialClass, out.width = "600px"}
+knitr::include_graphics("Factor_Sex_SocialClass.png")
+```
+
+
+## Guided tutorial: Tables 
+
+In a typical academic paper/report, we can use two types of tables:
+
+- descriptives (tokens, means, SDs...)
+- stat model output (e.g., from a regression model)
+
+## Guided tutorial: Tables (1)
+
+Let's start with a descriptive table! Let's use this to describe the number of people on board informed by gender and class, and their age mean.
+
+
+```{r age table}
+## Sara: what about just doing the mean age by gender and class?
+
+summary_data2 <- Titanic %>%
+  group_by( Pclass, Sex) %>%
+  summarise( "Survived %"= round(mean(as.numeric(as.character(Survived))*100),2),  
+          TotalN=n(), "Mean Age"=round(mean(Age),2),  "SE Age"=round(sd(Age)/sqrt(TotalN),2) )
+#table using kable() function
+summary_data2 %>%
+  kable() %>%
+  kable_styling(font_size= 20)
+
+
+```
+## Guided tutorial: Tables (2)
+
+Now the table we will create is a statistical model output. We test if survival was statistically predicted by Class and Sex of passengers.
+
+ glm (Survived~Pclass*Sex, family="binomial", data=Titanic)
+
+```{r model table, echo=FALSE}
+#with echo=FALSE you only show the output
+
+#set contrasts
+## this is something we need to do for regressions with factor (=categorical) predictors
+## we will use 2 types: treatment coding (compare effect to a baseline) and sum-to-zero coding (compare effect to averages)
+
+#Pclass--> as treatment coding with 2class as baseline
+contr2vs1<-c(1,0,0)
+contr2vs3<-c(0,0,1)
+contrasts(Titanic$Pclass)= cbind(contr2vs1,contr2vs3)
+
+#Sex--> sum-to-zero coding, 0.5 F, -0.5 M
+contrasts(Titanic$Sex)=c(0.5, -0.5)
+
+#glm model
+simple_model<-glm (Survived~Pclass*Sex, family="binomial", data=Titanic)
+#summary(simple_model)
+
+#table using kable() function
+
+coefficients(summary(simple_model))%>% round(4)%>%
+  kable() %>%
+  kable_styling(font_size = 20)
+
+#prepare for inline information
+simple_model.table<- coef(summary(simple_model))
+```
+
+##Guided Tutorial: Inline R code & Figure
+
+What we have seen from the model is that class really matters! 
+
+1st class were more likely to survive than 2nd class (beta=`r simple_model.table[2,1]%>% round(2)` (`r simple_model.table[2,2]%>% round(2)`), z= `r simple_model.table[2,3]%>% round(2)`, `r reportP(simple_model.table[2,4])`).
+
+Moreover, 2nd class were more likely to survive than 3rd class (beta=`r simple_model.table[3,1]%>% round(2)` (`r simple_model.table[3,2]%>% round(2)`), z= `r simple_model.table[3,3]%>% round(2)`, `r reportP(simple_model.table[3,4])`).
+
+---
+What about Sex?
+
+In our baseline level(i.e. 2nd class), women were more likely to survive than men (beta=`r simple_model.table[4,1]%>% round(2)` (`r simple_model.table[4,2]%>% round(2)`), z= `r simple_model.table[4,3]%>% round(2)`, `r reportP(simple_model.table[4,4])`). 
+
+The effect of sex does not differ when comparing 1st and 2nd class  (beta=`r simple_model.table[5,1]%>% round(2)` (`r simple_model.table[5,2]%>% round(2)`), z= `r simple_model.table[5,3]%>% round(2)`, `r reportP(simple_model.table[5,4])`), in both women have a similar advantage. 
+
+The significant interaction with sex and the 2nd versus 3rd class contrast shows that in the lowest class, the sex difference diminished (beta=`r simple_model.table[6,1]%>% round(2)` (`r simple_model.table[6,2]%>% round(2)`), z= `r simple_model.table[6,3]%>% round(2)`, `r reportP(simple_model.table[6,4])`) . That is women have less priority.
+
+
+## Guided Tutorial: Model Figure (1)
+
+Easy to see here: 
+
+```{r plot model, include=FALSE}
+
+#plot with Effects
+i<-effect("Pclass*Sex", simple_model)
+i.df <- as.data.frame(i)
+g <- ggplot(i.df,aes(x=Pclass,y=fit,color=(Sex),ymin=lower,ymax=upper)) + 
+  geom_pointrange(position=position_dodge(width=.1)) + #geom_smooth(method="lm",se=T,size=1)+
+  xlab("Social Class") + ylab("Survival") + ggtitle("Effect of Class, and Sex on Titanic Survival")
+#save plot
+ggsave("glm_results.png", plot = last_plot(), device = NULL, path = NULL,
+  scale = 1, width = NA, height = NA, units = c("in", "cm", "mm"),
+  dpi = 300, limitsize = TRUE)
+```
+
+```{r Titanic_Model, out.width = "600px"}
+knitr::include_graphics("glm_results.png")
+```

@@ -1,0 +1,12 @@
+"0","#plot with Effects"
+"0","i<-effect(""Pclass*Sex"", simple_model)"
+"0","i.df <- as.data.frame(i)"
+"0","g <- ggplot(i.df,aes(x=Pclass,y=fit,color=(Sex),ymin=lower,ymax=upper)) + "
+"0","  geom_pointrange(position=position_dodge(width=.1)) + #geom_smooth(method=""lm"",se=T,size=1)+"
+"0","  xlab(""Social Class"") + ylab(""Survival"") + ggtitle(""Effect of Class, and Sex on Titanic Survival"")"
+"0","#save plot"
+"0","ggsave(""glm_results.png"", plot = last_plot(), device = NULL, path = NULL,"
+"0","  scale = 1, width = NA, height = NA, units = c(""in"", ""cm"", ""mm""),"
+"0","  dpi = 300, limitsize = TRUE)"
+"2","Saving 7 x 7 in image
+"

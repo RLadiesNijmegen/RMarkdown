@@ -1,0 +1,9 @@
+"0","# First, let's look at the relationship between sex and survival"
+"0","## use ggplot to make a summary bar plot"
+"0","a<-ggplot(data = Titanic,aes(x=Sex,fill=Survived))+geom_bar()"
+"0","#save plot"
+"0","ggsave(""Factor_Sex.png"", plot = last_plot(), device = NULL, path = NULL,"
+"0","  scale = 1, width = NA, height = NA, units = c(""in"", ""cm"", ""mm""),"
+"0","  dpi = 300, limitsize = TRUE)"
+"2","Saving 7 x 7 in image
+"

@@ -1,0 +1,43 @@
+"0","#in your report, there will be things you don't want to be shown, like which packages you load."
+"0","#use include=FALSE to just run the code but not the output &/or code"
+"0","#packages"
+"0","library(ggplot2) #plots"
+"0","library(dplyr) #tidying "
+"2","
+Attaching package: ‘dplyr’
+
+"
+"2","The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+"
+"0","library(lme4) #mixed effect models"
+"2","Loading required package: Matrix
+"
+"0","library(knitr) #for pretty tables"
+"0","library(effects) #for plotting model output"
+"2","Loading required package: carData
+"
+"2","lattice theme set by effectsTheme()
+See ?effectsTheme for details.
+"
+"0","#install.packages(""kableExtra"")"
+"0","library(kableExtra)"
+"0","## if ever you don't have a package, install it with a command like this"
+"0","#install.packages('ggplot2')"
+"0","## also load in a function to round and make prettier output for p-values"
+"0","#reportP function"
+"0","reportP <- function(pValue){"
+"0","  if (pValue < 0.01){"
+"0","    result <- ""p<0.001"""
+"0","  } else {"
+"0","    result <- sprintf(""p=%.3f"", pValue) # inserts a float into a string and simultaneously do rounding"
+"0","  }"
+"0","  return(result)"
+"0","}"
