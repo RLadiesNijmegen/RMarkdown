@@ -1,5 +1,5 @@
 # RMarkdown
-Tutorials for learning R Markdown from RLadies Nijmegen
+Tutorials for learning R Markdown from RLadies Nijmegen.
 
 The folder 'Guided-tutorial' is a project folder that contains everything you need to compile today's slides. First, open the project file 'RMarkDownTutorial_RLadiesNijmegen'.  This will load a workspace and data. Run the script 'Guided-tutorials.Rmd' and Knit to make the slides!
 
