@@ -211,6 +211,8 @@ t3<- ds %>%
   summarise(TotalKTonnes = sum(as.numeric(KTonnes)) ) %>%
   filter(TotalKTonnes > 10)
 
+### if your script broke here, it may be a plyr interference problem.  run: detach(plyr)
+
 t3
 ```
 
