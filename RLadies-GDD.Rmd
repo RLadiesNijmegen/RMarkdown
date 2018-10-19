@@ -18,7 +18,12 @@ We have production in 1000 tonnes of *food* (=for people) and *feed* (=for anima
 There is also data about the country location (latitude and longitude).
 
 ```{r echo=F}
-# ## Here are the data cleaning commands I ran.
+### Here are the data cleaning commands I ran.
+### you don't need to also run these, you can skip straight to reading in FAO2.csv
+### that's why these are commented out with the # characther
+### this makes the computer ignore these commands
+### make sure if you do run these to detach plyr afterwards as it causes issues with dplyr. 
+
 # library(reshape2)
 # library(plyr)
 # library(stringr)
@@ -75,6 +80,8 @@ There is also data about the country location (latitude and longitude).
 #ds$Item.Code <- NULL
 
 # write.table(ds,"FAO2.csv",row.names=F,sep=",")
+
+# detach(plyr)  ## because we are using dplyr later and the two don't play nice together.
 ```
 
 ## Data Summary
